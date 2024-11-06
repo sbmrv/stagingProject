@@ -1,19 +1,34 @@
-import { View, Text, Image } from 'react-native'
-import React from 'react'
+import { View, Text, Image, Alert } from 'react-native'
+import React, { useRef, useState } from 'react'
 import { useRouter } from "expo-router";
 import { StatusBar, TextInput, TouchableOpacity } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Octicons, FontAwesome } from '@expo/vector-icons';
+import Loading from '../components/Loading'
 
 const signin = () => {
+  const [loading,  setLoading] = useState(false);
   const router = useRouter()
 
+  const emailRef = useRef("")
+  const passwordRef = useRef("")
+
+  const handleLogin = async () => {
+    if (!emailRef.current || !passwordRef.current) {
+      Alert.alert("Sign In", "Please fill all the fields")
+      return;
+    }
+  }
+  const forgetClick = () => {
+      setLoading(!loading)
+  }
+  
   return (
     <View className="flex-1">
       <StatusBar style="dark" />
       <View style={{ paddingTop: hp(8), paddingHorizontal: wp(5) }} className="flex-1 gap-12">
         <View className="items-center">
-          <Image style={{ height: hp(15) }} resizeMode="contain" source={require('../assets/images/swapna_logo.png')} />
+          <Image style={{ height: hp(12) }} resizeMode="contain" source={require('../assets/images/swapna_logo.png')} />
         </View>
         <View className="gap-10">
           <Text style={{ fontSize: hp(4) }} className="font-bold tracking-wider text-center text-natural-800">
@@ -23,6 +38,7 @@ const signin = () => {
             <View style={{ height: hp(7) }} className="flex-row gap-4 px-4 bg-neutral-100 items-center rounded-xl">
               <Octicons name='mail' size={hp(2.7)} color="gray" />
               <TextInput
+                onChangeText={value=> emailRef.current=value}
                 style={{ fontSize: hp(2) }}
                 className="flex-1 font-semibold text-neutral-700"
                 placeholder='Email Address' signup
@@ -33,31 +49,45 @@ const signin = () => {
               <View style={{ height: hp(7) }} className="flex-row gap-4 px-4 bg-neutral-100 items-center rounded-xl">
                 <Octicons name='lock' size={hp(2.7)} color="gray" />
                 <TextInput
+                onChangeText={value=> passwordRef.current=value}
                   style={{ fontSize: hp(2) }}
                   className="flex-1 font-semibold text-neutral-700"
                   placeholder='Password'
                   placeholderTextColor={'gray'}
+                  secureTextEntry={true}
                   />
               </View>
-              <Text style={{ fontSize: hp(1.8) }} className="font-semibold text-right text-natural-500">Forgot password?</Text>
+              <Text style={{ fontSize: hp(1.8) }} onPress={forgetClick} className="font-semibold text-right text-natural-500">Forgot password?</Text>
             </View>
 
-            <TouchableOpacity style={{
-              height: hp(6.5),
-              backgroundColor: '#101010', // Green color
-              borderRadius: 10,
-              justifyContent: 'center',
-              alignItems: 'center',
-              paddingHorizontal: 16,
-            }}>
-              <Text style={{
-                color: 'white',
-                fontSize: hp(2.2),
-                fontWeight: 'bold',
-              }}>
-                Login
-              </Text>
-            </TouchableOpacity>
+            <View>
+              {
+                loading? (
+                  <View className="flex-row justify-center" style={{ height: hp(6.5) }}>
+                    <Loading size={hp(6.5)} />
+                  </View>
+                ):(
+                  <TouchableOpacity 
+                    onPress={handleLogin}
+                    style={{
+                    height: hp(6.5),
+                    backgroundColor: '#101010', // Green color
+                    borderRadius: 10,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    paddingHorizontal: 16,
+                  }}>
+                    <Text style={{
+                      color: 'white',
+                      fontSize: hp(2.2),
+                      fontWeight: 'bold',
+                    }}>
+                      Login
+                    </Text>
+                  </TouchableOpacity>
+                )
+              }
+            </View>
           </View>
           {/* Line and Text */}
           <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 20, gap: 15 }}>
@@ -103,7 +133,7 @@ const signin = () => {
           </View>
           <TouchableOpacity onPress={() => router.push('/signup')} style={{ marginTop: 20 }}>
             <Text style={{ fontSize: hp(1.8), color: '#101010', textAlign: 'center', fontWeight: '600' }}>
-              Don’t have an account? <Text style={{ fontSize: hp(1.8), color: '#4CAF50', textAlign: 'center', fontWeight: '600' }}>Register now</Text>
+              Don’t have an account? <Text style={{ fontSize: hp(1.8), color: '#0000EE', textAlign: 'center', fontWeight: '600' }}>Register now</Text>
             </Text>
           </TouchableOpacity>
         </View>
