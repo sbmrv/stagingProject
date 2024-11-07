@@ -4,16 +4,18 @@ import { useRouter } from "expo-router";
 import { StatusBar, TextInput, TouchableOpacity } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Octicons, FontAwesome } from '@expo/vector-icons';
-import Loading from '../components/Loading'
-
+import Loading from '../components/Loading';
+import CustomkeyboardView from '../components/CustomkeyboardView';
+import { useAuth } from '../context/authContext';
 export default function Signup() {
+  const router = useRouter()
+  const {register} = useAuth()
   const [loading, setLoading] = useState(false);
 
-  const router = useRouter()
 
-  const usernameRef = useRef("")
   const emailRef = useRef("")
   const passwordRef = useRef("")
+  const usernameRef = useRef("")
   const profileRef = useRef("")
 
   const handleSignup = async () => {
@@ -21,8 +23,18 @@ export default function Signup() {
       Alert.alert("Sign Up", "Please fill all the fields")
       return;
     }
+    setLoading(true);
+
+    let response = await register(emailRef.current, passwordRef.current, usernameRef.current, profileRef.current)
+
+    setLoading(false);
+
+    if(!response.success){
+      Alert.alert("Sign Up", response.msg);
+    }
   }
   return (
+    <CustomkeyboardView>
     <View className="flex-1">
       <StatusBar style="dark" />
       <View style={{ paddingTop: hp(8), paddingHorizontal: wp(5) }} className="flex-1 gap-12">
@@ -129,5 +141,6 @@ export default function Signup() {
         </View>
       </View>
     </View>
+    </CustomkeyboardView>
   )
 }

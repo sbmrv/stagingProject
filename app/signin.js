@@ -5,10 +5,13 @@ import { StatusBar, TextInput, TouchableOpacity } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Octicons, FontAwesome } from '@expo/vector-icons';
 import Loading from '../components/Loading'
+import CustomkeyboardView from '../components/CustomkeyboardView'
+import { useAuth } from '../context/authContext';
 
 const signin = () => {
   const [loading,  setLoading] = useState(false);
   const router = useRouter()
+  const {login} = useAuth();
 
   const emailRef = useRef("")
   const passwordRef = useRef("")
@@ -18,12 +21,17 @@ const signin = () => {
       Alert.alert("Sign In", "Please fill all the fields")
       return;
     }
-  }
-  const forgetClick = () => {
-      setLoading(!loading)
+    setLoading(true);
+    const response = await login(emailRef.current, passwordRef.current);
+    setLoading(false);
+    console.log("signin respo:",response)
+    if (!response?.success) {
+      Alert.alert("Sign in", response?.msg)
+    }
   }
   
   return (
+    <CustomkeyboardView>
     <View className="flex-1">
       <StatusBar style="dark" />
       <View style={{ paddingTop: hp(8), paddingHorizontal: wp(5) }} className="flex-1 gap-12">
@@ -57,7 +65,7 @@ const signin = () => {
                   secureTextEntry={true}
                   />
               </View>
-              <Text style={{ fontSize: hp(1.8) }} onPress={forgetClick} className="font-semibold text-right text-natural-500">Forgot password?</Text>
+              <Text style={{ fontSize: hp(1.8) }} className="font-semibold text-right text-natural-500">Forgot password?</Text>
             </View>
 
             <View>
@@ -139,6 +147,7 @@ const signin = () => {
         </View>
       </View>
     </View>
+    </CustomkeyboardView>
   )
 }
 
