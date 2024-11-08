@@ -1,4 +1,4 @@
-import { View, Text, Image, Alert } from 'react-native'
+import { View, Text, Image, Alert, StyleSheet, SafeAreaView } from 'react-native'
 import React, { useRef, useState } from 'react'
 import { useRouter } from "expo-router";
 import { StatusBar, TextInput, TouchableOpacity } from 'react-native'
@@ -152,3 +152,119 @@ const signin = () => {
 }
 
 export default signin
+
+
+// import { Feather } from '@expo/vector-icons';
+// import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+
+// export default function signin() {
+//   return (
+//     <CustomkeyboardView>
+//     <SafeAreaView style={styles.container}>
+//       <StatusBar barStyle="dark-content" />
+
+//       {/* Header */}
+//       <View style={styles.header}>
+//         {/* <Feather name="utensils" size={24} color="#000" /> */}
+//         <FontAwesome5 name="utensils" size={24} color="black" />
+//         <Text style={styles.headerTitle}>Foodie Match</Text>
+//         <Feather name="heart" size={24} color="#000" />
+//       </View>
+
+//       {/* Main Image */}
+//       <View style={styles.imageContainer}>
+//         <Image
+//           source={require('../assets/images/heartlogin.png')}
+//           style={styles.mainImage}
+//           resizeMode="cover"
+//         />
+//       </View>
+
+//       {/* Login Options */}
+//       <View style={styles.loginContainer}>
+//         <TouchableOpacity style={styles.loginButton} onPress={() => { }}>
+//           <Feather name="mail" size={24} color="#000" />
+//           <Text style={styles.buttonText}>Sign up with Email</Text>
+//         </TouchableOpacity>
+
+//         <TouchableOpacity style={styles.loginButton} onPress={() => { }}>
+//             <FontAwesome name="google" size={hp(3)} color="black" />
+//             <Image
+//               source={require('../assets/images/googleicon.png')}
+//               style={styles.iconImage}
+//             />
+//           <Text style={styles.buttonText}>Sign in with Apple</Text>
+//         </TouchableOpacity>
+
+//         <TouchableOpacity style={styles.loginButton} onPress={() => { }}>
+//             <Image
+//               source={require('../assets/images/appleicon.png')}
+//               style={styles.iconImage}
+//             />
+//           <Text style={styles.buttonText}>Sign in with Google</Text>
+//         </TouchableOpacity>
+
+//         <TouchableOpacity onPress={() => { }}>
+//           <Text style={styles.guestText}>Continue as Guest</Text>
+//         </TouchableOpacity>
+//       </View>
+//     </SafeAreaView>
+//     </CustomkeyboardView>
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: '#fff',
+//   },
+//   header: {
+//     flexDirection: 'row',
+//     justifyContent: 'space-between',
+//     alignItems: 'center',
+//     paddingHorizontal: 20,
+//     paddingVertical: 10,
+//   },
+//   headerTitle: {
+//     fontSize: 20,
+//     fontWeight: '600',
+//   },
+//   imageContainer: {
+//     width: '100%',
+//     height: 400,
+//     marginVertical: 20,
+//   },
+//   mainImage: {
+//     width: '100%',
+//     height: '100%',
+//     borderRadius: 20,
+//   },
+//   loginContainer: {
+//     paddingHorizontal: 20,
+//     gap: 16,
+//   },
+//   loginButton: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     backgroundColor: '#F5F5F5',
+//     padding: 16,
+//     borderRadius: 100,
+//     gap: 12,
+//   },
+//   buttonText: {
+//     fontSize: 16,
+//     fontWeight: '500',
+//     color: '#000',
+//   },
+//   iconImage: {
+//     width: 24,
+//     height: 24,
+//   },
+//   guestText: {
+//     fontSize: 16,
+//     fontWeight: '500',
+//     color: '#000',
+//     textAlign: 'center',
+//     marginTop: 8,
+//   },
+// });
