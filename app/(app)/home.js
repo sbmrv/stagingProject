@@ -11,7 +11,7 @@ import { where, query, getDocs } from 'firebase/firestore';
 
 export default function Home() {
   const { logout, user } = useAuth();
-  const [users, setUsers] = useState([1,2,3]);
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
     if (user?.uid) {
