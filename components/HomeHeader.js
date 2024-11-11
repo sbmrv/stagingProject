@@ -80,7 +80,7 @@ export default function HomeHeader() {
               text="Logout"
               action={handleLogout}
               value={null}
-              icon={<AntDesign name="logout" size={hp(2.5)} color="black" />}
+              icon={<AntDesign name="logout" size={hp(2.3)} color="#737373" />}
             />
           </MenuOptions>
         </Menu>
