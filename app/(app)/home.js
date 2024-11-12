@@ -53,9 +53,6 @@ export default function Home() {
       });
       
       if (data.length > 0) {
-        console.log('Fetched Data:', data.forEach(i=>{
-          console.log(i.username)
-        }));
         setUsers(data); // Set the users with the fetched data
       } else {
         console.log('No users found');
@@ -65,7 +62,6 @@ export default function Home() {
     }
   };
   
-  console.log(users, "sdsdjsidshdshds")
   return (
     
     <View style={{ flex: 1, backgroundColor: 'white' }}>

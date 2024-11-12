@@ -9,21 +9,34 @@ import { TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useAuth } from '../../context/authContext';
 import { getRoomId } from '../../utils/common';
-import { Timestamp } from 'firebase/firestore';
 import { auth, db } from '../../firebaseConfig';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, onSnapshot, orderBy, setDoc, Timestamp } from 'firebase/firestore';
 import { useRef } from 'react';
+import { addDoc, collection, query } from 'firebase/firestore';
+
 const chatRoom = () => {
   const item = useLocalSearchParams(); //second user
   const {user} = useAuth(); //logged in user
   const router = useRouter()
   const [messages, setMessages] = useState([])
   const textRef = useRef('');
+  const inputRef = useRef(null);
 
   useEffect(() => {
     createRoomIfNotExists();
-  
-    console.log(user,":room", item)
+    let roomId = getRoomId(user?.userid, item?.userid);
+    const docRef = doc(db, "rooms", roomId);
+    const messagesRef = collection(docRef, "messages");
+    const q = query(messagesRef, orderBy('createdAt', 'asc'));
+    
+    let unsub = onSnapshot(q, (snapshot)=>{
+      let allMessages = snapshot.docs.map(doc=>{
+        return doc.data();
+      })
+      setMessages([...allMessages]);
+    })
+
+    return unsub;
   }, [])
   const createRoomIfNotExists = async ()=>{
     // roomId
@@ -34,26 +47,33 @@ const chatRoom = () => {
     });
   }
   const handleSendMessage = async () => {
+    if (!user?.userid) {
+      console.log("User ID is not available.");
+      return;
+    }
     let message = textRef.current.trim();
-    if(!message) return;
+    if (!message) return;
     try {
       let roomId = getRoomId(user?.userid, item?.userid);
-      const docRef = doc(db, 'room', roomId);
+      const docRef = doc(db, 'rooms', roomId);
       const messagesRef = collection(docRef, "messages");
-
+      textRef.current= "";
+      if (inputRef) inputRef?.current?.clear();
+      console.log(inputRef.current, "hhhhhhhhhhh")
       const newDoc = await addDoc(messagesRef, {
         userid: user?.userid,
         text: message,
         profileUrl: user?.profileUrl,
         senderName: user?.username,
-        createdAt: Timestap.fromDate(new Date())
+        createdAt: Timestamp.fromDate(new Date())
       });
 
       console.log("new message id:", newDoc.id);
     } catch (error) {
-      
+      console.log("error: ", error);
     }
-  }
+  };
+
   return (
     <View className="flex-1 bg-white">
       <StatusBar style='dark' />
@@ -61,19 +81,21 @@ const chatRoom = () => {
       <View className="h-3 border-b border-neutral-300" />
       <View className="flex-1 justify-between bg-neutral-100 overflow-visible">
         <View className="flex-1">
-          <MessageList messages={messages} />
+          <MessageList messages={messages} currentUser={user} />
         </View>
         <View style={{ marginBottom: hp(2.7) }} className="pt-2">
           <View className="flex-row mx-3 justify-between items-center mx-3">
             <View className="flex-row justify-between bg-white border p-2 border-neutral-300 rounded-neutral-300 rounded-full pl-2">
               <TextInput
+                ref={inputRef}
                 onChangeText={value => textRef.current = value}
-                placeholder='Type message'
+                placeholder='Type message...'
                 style={{ fontSize: hp(2) }}
                 className="flex-1 mr-2"
               />
-              <TouchableOpacity onPress={handleSendMessage} className="bg-neutral-200 p-2 mr-[1px] rounded-full">
+              <TouchableOpacity onPress={handleSendMessage} className="bg-neutral-200 p-2 mr-[1px] rounded-full flex-row">
                 <Feather name='send' size={hp(2.7)} color="#737373" />
+                <Text>send</Text>
               </TouchableOpacity>
             </View>
           </View>
