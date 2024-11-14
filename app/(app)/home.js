@@ -67,7 +67,7 @@ export default function Home() {
     <View style={{ flex: 1, backgroundColor: 'white' }}>
       <StatusBar style='light' />
       {users.length > 0 ? (
-        <ChatList users={users} />
+        <ChatList currentUser={user} users={users} />
       ) : (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <ActivityIndicator size="large" />

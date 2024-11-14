@@ -1,4 +1,4 @@
-import { View, Text, TextInput } from 'react-native'
+import { View, Text, TextInput, Keyboard } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { StatusBar } from 'expo-status-bar';
@@ -16,11 +16,12 @@ import { addDoc, collection, query } from 'firebase/firestore';
 
 const chatRoom = () => {
   const item = useLocalSearchParams(); //second user
-  const {user} = useAuth(); //logged in user
+  const { user } = useAuth(); //logged in user
   const router = useRouter()
   const [messages, setMessages] = useState([])
   const textRef = useRef('');
   const inputRef = useRef(null);
+  const scrollViewRef = useRef(null);
 
   useEffect(() => {
     createRoomIfNotExists();
@@ -28,20 +29,39 @@ const chatRoom = () => {
     const docRef = doc(db, "rooms", roomId);
     const messagesRef = collection(docRef, "messages");
     const q = query(messagesRef, orderBy('createdAt', 'asc'));
-    
-    let unsub = onSnapshot(q, (snapshot)=>{
-      let allMessages = snapshot.docs.map(doc=>{
+
+    let unsub = onSnapshot(q, (snapshot) => {
+      let allMessages = snapshot.docs.map(doc => {
         return doc.data();
       })
       setMessages([...allMessages]);
     })
 
-    return unsub;
+    const keyboardDidShowListner = Keyboard.addListener(
+      'keyboardDidShow', updateScrollView
+    ) 
+
+    return () =>{
+      unsub();
+      keyboardDidShowListner.remove()
+    }
   }, [])
-  const createRoomIfNotExists = async ()=>{
+
+  useEffect(() => {
+    updateScrollView();
+  }, [messages])
+  
+
+  const updateScrollView =()=>{
+    setTimeout(() => {
+      scrollViewRef?.current?.scrollToEnd({animated: true})
+    }, 100);
+  }
+
+  const createRoomIfNotExists = async () => {
     // roomId
     let roomId = getRoomId(user?.userid, item?.userid);
-    await setDoc(doc(db, "rooms", roomId),{
+    await setDoc(doc(db, "rooms", roomId), {
       roomId,
       createdAt: Timestamp.fromDate(new Date())
     });
@@ -57,7 +77,7 @@ const chatRoom = () => {
       let roomId = getRoomId(user?.userid, item?.userid);
       const docRef = doc(db, 'rooms', roomId);
       const messagesRef = collection(docRef, "messages");
-      textRef.current= "";
+      textRef.current = "";
       if (inputRef) inputRef?.current?.clear();
       console.log(inputRef.current, "hhhhhhhhhhh")
       const newDoc = await addDoc(messagesRef, {
@@ -81,7 +101,7 @@ const chatRoom = () => {
       <View className="h-3 border-b border-neutral-300" />
       <View className="flex-1 justify-between bg-neutral-100 overflow-visible">
         <View className="flex-1">
-          <MessageList messages={messages} currentUser={user} />
+          <MessageList scrollViewRef={scrollViewRef} messages={messages} currentUser={user} />
         </View>
         <View style={{ marginBottom: hp(2.7) }} className="pt-2">
           <View className="flex-row mx-3 justify-between items-center mx-3">
